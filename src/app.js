@@ -20,21 +20,29 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 /**
- * 代理规则检查中间件
- */
-app.use(proxyRuleCheck());
-
-/**
- * 健康检查
+ * 健康检查 放在每个项目的最开始，不需要走中间件
  */
 app.get('/health', bodyParser.json(), (req, res) => {
   return res.end('OK!');
 });
 
+/**
+ * 鉴权中间件
+ */
+// app.use(authMiddlwware())
+
+/**
+ * 路由代理规则检查中间件
+ */
+app.use(proxyRuleCheck());
+
+/**
+ * 当前服务API必须放在路由转发中间件之前
+ */
 app.use('/', router);
 
 /**
- * 代理转发中间件
+ * 路由代理转发中间件
  */
 app.use(
   createProxyMiddleware({
@@ -46,6 +54,11 @@ app.use(
     },
     on: {
       proxyReq: (proxyReq, req, res) => {
+        console.log('----代理前信息', req);
+        /* 如果req.proxyTargetUrl不存在或者为空字符串，表示代理服务未找到 */
+        if (!req.proxyTargetUrl || req.proxyTargetUrl === '') {
+          res.json({ error: '', msg: '服务未启动或不可达!' });
+        }
         /* 代理前赋值用户角色信息 */
       },
     },

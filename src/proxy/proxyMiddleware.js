@@ -13,6 +13,7 @@ const proxyTarget = async (req) => {
     //拼接target地址
     target = 'http://' + serverInfo['address'] + ':' + serverInfo['port'];
   }
+  req.proxyTargetUrl = target;
   return target;
 };
 
@@ -39,7 +40,7 @@ const proxyRuleCheck = () => {
           // 判断当前微服务是否正常运行
           const serverInfo = serviceLocalStorage.getItem(item[baseUrl]);
           // 服务正常运行继续
-          if (serverInfo) {
+          if (serverInfo && serverInfo.length > 0) {
             // 代理转发
             req.proxyServeName = item[baseUrl];
             return next();

@@ -15,7 +15,7 @@ class Discovery {
     const { service } = opts;
     // 从缓存中获取列表
     const services = serviceLocalStorage.getItem(service);
-    if (services.length > 0) {
+    if (services && services.length > 0) {
       console.log(`命中缓存，key:${service},value:${JSON.stringify(services)}`);
       return services;
     }

@@ -11,7 +11,6 @@ const discovery = new Discovery(consulClient);
  */
 const getServiceHost = async (name) => {
   const services = await discovery.getService({ service: name });
-  console.log('ppppppp----services', services);
   //生成[0,max]任意随机数
   random = Math.floor(Math.random() * services.length);
   //定义随机数，随机获取ip的负载均衡策略
