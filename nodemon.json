@@ -1,0 +1,23 @@
+{
+  "restartable": "rs",
+  "ignore": [
+    "test",
+    ".git",
+    ".svn",
+    "build",
+    "dist",
+    "schema",
+    "docker",
+    "node_modules/**/node_modules"
+  ],
+  "verbose": true,
+  "execMap": {
+    "js": "node --harmony"
+  },
+  "watch": [],
+  "env": {
+    "NODE_ENV": "development",
+    "DEBUG": "hilliebr-gatewayserver:*"
+  },
+  "ext": "js json yml graphql html"
+}

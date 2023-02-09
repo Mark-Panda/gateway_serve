@@ -1,0 +1,32 @@
+#网关服务配置
+gatewayServe:
+  port: 6701
+  serveName: 'gateway_serve'
+  # 路由白名单
+  whileList: ['dev', 'health', 'gateway_serve']
+#consul服务配置
+consulServe:
+  host: '172.26.166.27'
+  port: 8500
+
+# 微服务路由标识
+serveSignURL:
+  [
+    'gateway': 'gateway_serve',
+    'flow': 'miServe',
+    'common': 'baseServe',
+    'node': 'nodeServe',
+    'java': 'javaServe',
+    'develop': 'devServe',
+  ]
+
+# 所有服务列表
+serveList:
+  [
+    'gateway_serve',
+    'miServe',
+    'baseServe',
+    'nodeServe',
+    'javaServe',
+    'devServe',
+  ]

@@ -1,0 +1,10 @@
+**/node_modules/
+docker/registrator
+
+build
+dist
+volumes
+
+#MacOS 配置文件
+.DS_Store 
+*/.DS_Store 
