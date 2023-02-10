@@ -66,12 +66,10 @@ app.use(
       return url;
     },
     onProxyReq: async function (proxyReq, req, res) {
-      // proxyReq.setHeader('Content-Type', 'application/json; charset=UTF-8;');
-      log.debug('----代理前信息', req.proxyTargetUrl);
-      // console.log('----代理前信息', req.proxyTargetUrl);
+      log.debug('服务代理地址', req.proxyTargetUrl);
       /* 如果req.proxyTargetUrl不存在或者为空字符串，表示代理服务未找到 */
       if (!req.proxyTargetUrl || req.proxyTargetUrl === '') {
-        res.json({ error: '', msg: '服务未启动或不可达!' });
+        res.json({ error: 'NOSERVER', msg: '服务未启动或不可达!' });
       }
       /* 代理前赋值用户角色信息 */
     },
@@ -80,7 +78,7 @@ app.use(
     },
     onError: async function (err, req, res) {
       log.error('服务代理异常', err);
-      res.json({ error: '', msg: '服务请求异常!' });
+      res.json({ error: 'PROXY_ERROR', msg: '服务请求异常!' });
     },
   }),
 );
@@ -91,18 +89,15 @@ const workerProcess = child_process.fork(rootPath + '/src/watch/startWatch.js');
 // 子进程退出
 workerProcess.on('exit', function (code) {
   log.info(`子进程已退出，退出码：${code}`);
-  // console.log(`子进程已退出，退出码：${code}`);
 });
 workerProcess.on('error', function (error) {
   log.info(`error: ${error}`);
-  // console.log(`error: ${error}`);
 });
 
 // 接收变化的服务列表，并更新到缓存中
 workerProcess.on('message', (msg) => {
   if (msg) {
     log.info(`从监控中数据变化：${JSON.stringify(msg)}`);
-    // console.log(`从监控中数据变化：${JSON.stringify(msg)}`);
     let serveList = [];
     for (let serveItem of msg.data) {
       if (serveItem['Checks'][0]['Status'] === 'passing') {

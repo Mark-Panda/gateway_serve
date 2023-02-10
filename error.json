@@ -1,0 +1,11 @@
+{
+  "NOAPI": "API不存在",
+  "NOSERVER": "服务未启动或请求不可达",
+  "PROXY_ERROR": "代理请求异常",
+  "PROXY_CHECK_ERROR": "代理规则检查异常",
+  "PARAM_ERROR": "参数错误",
+  "VALIDATION_ERROR": "验证错误",
+  "SYSTEM_ERROR": "系统错误",
+  "REQUEST_TOO_FAST": "请求频率太快",
+  "BUSSINESS_ERROR": "业务错误"
+}

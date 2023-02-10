@@ -7,11 +7,13 @@ const { getServiceHost } = require('./service');
  */
 const proxyTarget = async (req) => {
   let target = '';
-  //随机访问地址
-  const serverInfo = await getServiceHost(req.proxyServeName);
-  if (serverInfo) {
-    //拼接target地址
-    target = 'http://' + serverInfo['address'] + ':' + serverInfo['port'];
+  if (req.proxyServeName) {
+    //随机访问地址
+    const serverInfo = await getServiceHost(req.proxyServeName);
+    if (serverInfo) {
+      //拼接target地址
+      target = 'http://' + serverInfo['address'] + ':' + serverInfo['port'];
+    }
   }
   req.proxyTargetUrl = target;
   return target;
@@ -46,13 +48,16 @@ const proxyRuleCheck = () => {
             return next();
           }
           // 没有运行直接抛出错误提示服务尚未运行
-          return res.json({ error: '', msg: `${item[baseUrl]}服务未运行` });
+          return res.json({
+            error: 'NOSERVER',
+            msg: `${item[baseUrl]}服务未运行`,
+          });
         }
       }
-      return res.json({ error: '', msg: 'API不存在' });
+      return res.json({ error: 'NOAPI', msg: 'API不存在' });
     } catch (error) {
       res.status(401);
-      res.json({ error: '', msg: '路由代理规则检查异常' });
+      res.json({ error: 'PROXY_CHECK_ERROR', msg: '路由代理规则检查异常' });
     }
   };
 };
