@@ -19,6 +19,7 @@ class Discovery {
       console.log(`命中缓存，key:${service},value:${JSON.stringify(services)}`);
       return services;
     }
+    console.log('====getService', opts);
     //如果缓存不存在，则获取远程数据
     const serverStatus = await this.consul.getHealthServe(service);
     console.log(
@@ -45,6 +46,7 @@ class Discovery {
    * @param {*} serveName
    */
   async checkServeStatus(serveName) {
+    console.log('----checkServeStatus', serveName);
     const serverStatus = await this.consul.getHealthServe(serveName);
     return serverStatus;
   }

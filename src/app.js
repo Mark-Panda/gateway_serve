@@ -3,7 +3,8 @@ const bodyParser = require('body-parser');
 const child_process = require('child_process');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const log4js = require('log4js');
-const { gatewayServe, rootPath } = require('./config').Config;
+const path = require('path');
+const { gatewayServe, rootPath, staticPath } = require('./config').Config;
 const router = require('./proxy/router');
 const serviceLocalStorage = require('./watch/local-storage.js');
 const { proxyRuleCheck, proxyTarget } = require('./proxy/proxyMiddleware');
@@ -13,17 +14,33 @@ const app = express();
 const logger = log4js.getLogger();
 logger.level = 'debug';
 
+// TODO: 代理graphql请求的话bodyParser中间件会影响代理转发，如果后续仍有问题需要解决
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));
-
+// app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 /**
  * 健康检查 放在每个项目的最开始，不需要走中间件
  */
 app.get('/health', bodyParser.json(), (req, res) => {
   return res.end('OK!');
+});
+
+//静态资源
+app.use(express.static(staticPath));
+
+/**
+ * 在网关提供graphql-playground调试界面
+ */
+app.get('/playground', (req, res) => {
+  return res.render('playground', {
+    path: '/commonApi/graphql',
+    username: 'panda',
+  });
 });
 
 /**
@@ -52,15 +69,20 @@ app.use(
       const url = await proxyTarget(req);
       return url;
     },
-    on: {
-      proxyReq: (proxyReq, req, res) => {
-        console.log('----代理前信息', req);
-        /* 如果req.proxyTargetUrl不存在或者为空字符串，表示代理服务未找到 */
-        if (!req.proxyTargetUrl || req.proxyTargetUrl === '') {
-          res.json({ error: '', msg: '服务未启动或不可达!' });
-        }
-        /* 代理前赋值用户角色信息 */
-      },
+    onProxyReq: async function (proxyReq, req, res) {
+      // proxyReq.setHeader('Content-Type', 'application/json; charset=UTF-8;');
+      console.log('----代理前信息', req.proxyTargetUrl);
+      /* 如果req.proxyTargetUrl不存在或者为空字符串，表示代理服务未找到 */
+      if (!req.proxyTargetUrl || req.proxyTargetUrl === '') {
+        res.json({ error: '', msg: '服务未启动或不可达!' });
+      }
+      /* 代理前赋值用户角色信息 */
+    },
+    onProxyRes: async function (proxyRes, req, res) {
+      // console.log('----返回', res);
+    },
+    onError: async function (err, req, res) {
+      console.log('----异常', err);
     },
   }),
 );

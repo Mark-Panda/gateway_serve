@@ -27,6 +27,7 @@ class Watch {
     }
     // 监听服务核心代码
     function serviceWatch(service) {
+      console.log('======serviceservice', service);
       const watch = consul.watch({
         method: consul.health.service,
         options: {

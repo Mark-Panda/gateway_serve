@@ -159,6 +159,7 @@ class ConsulConfig {
    * ]
    */
   async getHealthServe(serveName) {
+    console.log('999999', serveName);
     return this.consul.health.service(serveName);
   }
 
@@ -197,8 +198,8 @@ class ConsulConfig {
 const consulClient = new ConsulConfig({
   consulhost: consulServe.host,
   consulport: consulServe.port,
-  servicehost: consulServe.host,
-  serviceport: gatewayServe.port,
+  servicehost: '172.26.165.67',
+  serviceport: 3100,
   serviceName: gatewayServe.serveName,
 });
 
