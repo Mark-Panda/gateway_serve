@@ -88,10 +88,10 @@ const workerProcess = child_process.fork(rootPath + '/src/watch/startWatch.js');
 
 // 子进程退出
 workerProcess.on('exit', function (code) {
-  log.info(`子进程已退出，退出码：${code}`);
+  log.info(`服务发现子进程已退出: ${code}`);
 });
 workerProcess.on('error', function (error) {
-  log.info(`error: ${error}`);
+  log.info(`服务发现进程错误: ${error}`);
 });
 
 // 接收变化的服务列表，并更新到缓存中

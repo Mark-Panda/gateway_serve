@@ -1,6 +1,6 @@
 const log4js = require('log4js');
 
-const PROCESS_NAME = process.env.name ? process.env.name : 'develop',
+const PROCESS_NAME = process.env.name ? process.env.name : 'gateway',
   PM_ID = process.env.pm_id ? process.env.pm_id : 0,
   LEVEL = 'debug',
   LAYOUT_TYPE = 'pattern',

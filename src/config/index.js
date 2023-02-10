@@ -28,6 +28,7 @@ let config = {
   gatewayServe: sysInfo.gatewayServe,
   consulServe: sysInfo.consulServe,
   serveList: sysInfo.serveList,
+  dbConfig: sysInfo.dbConfig,
   serveSignURL: sysInfo.serveSignURL,
   rootPath,
   staticPath: `${rootPath}/src/public`,

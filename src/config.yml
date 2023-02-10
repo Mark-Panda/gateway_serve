@@ -11,6 +11,10 @@ consulServe:
   host: '172.26.166.24'
   port: 8500
 
+# 数据库连接配置
+dbConfig:
+  link: 'mysql://root:prisma@localhost:3306/ebrserver'
+
 # 微服务路由标识
 serveSignURL:
   [

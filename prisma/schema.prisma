@@ -1,0 +1,158 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+/// 组织机构- 对应集团，公司，部门
+model Organize {
+  id          String       @id @default(cuid()) @db.Char(25)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  ///删除的数据
+  isDelete    Boolean      @default(false)
+  /// 编码
+  code        String       @unique
+  ///  名称不可重复
+  name        String
+  /// 人员信息
+  persons     Person[]
+  /// 组织类型
+  type        OrganizeType
+  /// 说明
+  description String?
+  /// 父组织:一
+  parentId    String?      @map("parent") @db.Char(25)
+  parent      Organize?    @relation(name: "OrganizeOneToManyRelation", fields: [parentId], references: [id])
+  /// 子结构:多
+  organizes   Organize[]   @relation(name: "OrganizeOneToManyRelation")
+}
+
+/// 人员信息  一个人员对应一个用户
+model Person {
+  id          String        @id @default(cuid()) @db.Char(25)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  ///删除的数据
+  isDelete    Boolean       @default(false)
+  /// 员工编码，不能重复
+  code        String        @unique
+  /// 人员名称，中文名称等
+  name        String?
+  ///  个人头像
+  avatar      String?
+  /// 对应的登录用户，可以为空
+  user        User[]
+  ///  生日
+  birthday    DateTime?
+  ///  手机号
+  mobile      String?
+  /// 性别
+  sex         SexType?      @default(MALE)
+  /// 组织 用户至少从属１个组织
+  organize    Organize[]
+  /// 状态
+  status      PersonStatus?
+  ///其他描述信息
+  description String?
+}
+
+/// 用户信息 登录、密码、鉴权
+model User {
+  id          String      @id @default(cuid()) @db.Char(25)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  ///删除的数据
+  isDelete    Boolean     @default(false)
+  /// 用户名称，用户登录字段
+  name        String      @unique
+  /// 用户邮箱，密码找回用
+  email       String      @unique
+  ///  密码
+  password    String
+  /// 用户角色组
+  role        Role        @default(USER)
+  /// 用户组
+  group       UserGroup[]
+  /// RFID 可以为空不能重复
+  RFID        String?
+  /// 用户对应人员
+  person      Person[]
+  /// 其他描述信息
+  description String?
+  /// 用户过期,时间戳
+  expired     Float?      @default(0)
+  /// 用户状态
+  status      UserStatus  @default(INACTIVATED)
+}
+
+/// 用户组 -- 用户分组，菜单和功能操作权限对应用户组进行分配
+model UserGroup {
+  id          String       @id @default(cuid()) @db.Char(25)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  ///删除的数据
+  isDelete    Boolean      @default(false)
+  /// 用户组编码，不能重复
+  code        String       @unique
+  /// 用户组名称
+  name        String
+  /// 用户列表
+  users       User[]
+  /// 其他描述信息
+  description String?
+}
+
+
+/// 组织类型
+enum OrganizeType {
+  /// 集团
+  GROUP
+  ///   公司
+  COMPANY
+  ///   部门
+  DEPARTMENT
+}
+
+/// 人员状态
+enum PersonStatus {
+  ///   在职
+  INCUMBENCY
+  ///   离职
+  LEAVING
+}
+
+/// 性别
+enum SexType {
+  ///   男
+  MALE
+  ///   女
+  FEMALE
+  ///   其他
+  OTHER
+}
+
+/// 角色定义
+enum Role {
+  ///   超级管理员
+  ADMIN
+  ///   系统管理员
+  SYSTEM
+  ///   普通用户
+  USER
+}
+
+/// 用户状态
+enum UserStatus {
+  ///   锁定
+  LOCK
+  ///   活动
+  ACTIVITY
+  ///   未激活
+  INACTIVATED
+}
+
