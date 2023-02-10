@@ -1,4 +1,5 @@
 const Consul = require('consul');
+const log = require('../config/log')('gateway_watch');
 
 class Watch {
   constructor({ consulhost, consulport }) {
@@ -27,7 +28,6 @@ class Watch {
     }
     // 监听服务核心代码
     function serviceWatch(service) {
-      console.log('======serviceservice', service);
       const watch = consul.watch({
         method: consul.health.service,
         options: {
@@ -40,11 +40,11 @@ class Watch {
           name: service,
           data,
         };
-        console.log(`监听${service}内容有变化：${JSON.stringify(result)}`);
+        log.info(`监听${service}内容有变化：${JSON.stringify(result)}`);
         onChanged(null, result);
       });
       watch.on('error', (error) => {
-        console.log(`监听${service}错误,错误的内容为：${error}`);
+        log.error(`监听${service}错误,错误的内容为：${error}`);
         onChanged(error, null);
       });
     }

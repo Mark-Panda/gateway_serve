@@ -1,5 +1,6 @@
 const Consul = require('consul');
 const { consulServe, gatewayServe } = require('../config').Config;
+const log = require('../config/log')('gateway_consul');
 class ConsulConfig {
   /**
    * consul初始化信息
@@ -16,7 +17,6 @@ class ConsulConfig {
     serviceport,
     serviceName,
   }) {
-    // console.log('===', 'http://' + servicehost + ':' + serviceport + '/health');
     this.consul = new Consul({
       host: consulhost,
       port: consulport,
@@ -41,7 +41,7 @@ class ConsulConfig {
             throw err;
           }
 
-          console.log(serviceName + ' 注册成功！');
+          log.info(serviceName + '服务注册成功！');
         },
       );
     }
@@ -159,7 +159,6 @@ class ConsulConfig {
    * ]
    */
   async getHealthServe(serveName) {
-    console.log('999999', serveName);
     return this.consul.health.service(serveName);
   }
 

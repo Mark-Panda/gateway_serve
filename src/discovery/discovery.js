@@ -1,4 +1,5 @@
 const serviceLocalStorage = require('../watch/local-storage.js');
+const log = require('../config/log')('gateway_discovery');
 
 /**
  * 服务发现
@@ -16,13 +17,12 @@ class Discovery {
     // 从缓存中获取列表
     const services = serviceLocalStorage.getItem(service);
     if (services && services.length > 0) {
-      console.log(`命中缓存，key:${service},value:${JSON.stringify(services)}`);
+      log.info(`命中缓存，key:${service},value:${JSON.stringify(services)}`);
       return services;
     }
-    console.log('====getService', opts);
     //如果缓存不存在，则获取远程数据
     const serverStatus = await this.consul.getHealthServe(service);
-    console.log(
+    log.info(
       `获取服务端数据，key：${service}：value:${JSON.stringify(serverStatus)}`,
     );
     let serveList = [];
@@ -46,7 +46,6 @@ class Discovery {
    * @param {*} serveName
    */
   async checkServeStatus(serveName) {
-    console.log('----checkServeStatus', serveName);
     const serverStatus = await this.consul.getHealthServe(serveName);
     return serverStatus;
   }

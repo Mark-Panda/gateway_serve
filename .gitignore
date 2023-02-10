@@ -5,6 +5,8 @@ build
 dist
 volumes
 
+gateway_logs
+
 #MacOS 配置文件
 .DS_Store 
 */.DS_Store 
