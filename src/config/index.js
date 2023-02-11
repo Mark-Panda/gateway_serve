@@ -29,6 +29,7 @@ let config = {
   consulServe: sysInfo.consulServe,
   serveList: sysInfo.serveList,
   dbConfig: sysInfo.dbConfig,
+  cacheConfig: sysInfo.cacheConfig,
   serveSignURL: sysInfo.serveSignURL,
   rootPath,
   staticPath: `${rootPath}/src/public`,

@@ -15,6 +15,11 @@ consulServe:
 dbConfig:
   link: 'mysql://root:prisma@localhost:3306/ebrserver'
 
+# redis配置
+cacheConfig:
+  host: 'localhost'
+  port: 6379
+
 # 微服务路由标识
 serveSignURL:
   [
