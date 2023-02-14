@@ -95,8 +95,22 @@ function getIpAddress() {
   }
 }
 
+/**
+ * 范围内随机数
+ * @param {*} min 最小值
+ * @param {*} max 最大值
+ * @returns
+ */
+function random_number(min, max) {
+  var range = max - min;
+  var rand = Math.random();
+  var num = min + Math.round(rand * range);
+  return num;
+}
+
 module.exports = {
   setField,
   getField,
   getIpAddress,
+  random_number,
 };

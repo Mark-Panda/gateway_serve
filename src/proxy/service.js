@@ -1,7 +1,7 @@
 const Discovery = require('../discovery/discovery');
 const consulClient = require('../consul/consul');
 const { serveList } = require('../config').Config;
-
+const { random_number } = require('../util/index');
 const discovery = new Discovery(consulClient);
 
 /**
@@ -12,7 +12,7 @@ const discovery = new Discovery(consulClient);
 const getServiceHost = async (name) => {
   const services = await discovery.getService({ service: name });
   //生成[0,max]任意随机数
-  random = Math.floor(Math.random() * services.length);
+  const random = random_number(0, services.length - 1);
   //定义随机数，随机获取ip的负载均衡策略
   const host = services[random];
   return host;
