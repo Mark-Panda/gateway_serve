@@ -11,6 +11,7 @@ specifiers:
   js-yaml: ^4.1.0
   jsonwebtoken: ^9.0.0
   log4js: ^6.7.1
+  moment: ^2.29.4
   nodemon: ^2.0.20
   prisma: ^4.10.1
 
@@ -25,6 +26,7 @@ dependencies:
   js-yaml: 4.1.0
   jsonwebtoken: 9.0.0
   log4js: 6.7.1
+  moment: 2.29.4
 
 devDependencies:
   nodemon: 2.0.20
@@ -715,6 +717,10 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       brace-expansion: 2.0.1
+    dev: false
+
+  /moment/2.29.4:
+    resolution: {integrity: sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==}
     dev: false
 
   /ms/2.0.0:

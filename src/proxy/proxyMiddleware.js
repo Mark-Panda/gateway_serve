@@ -1,6 +1,8 @@
+const { createProxyMiddleware } = require('http-proxy-middleware');
 const { gatewayServe, serveSignURL } = require('../config').Config;
 const serviceLocalStorage = require('../watch/local-storage');
 const { getServiceHost } = require('./service');
+const log = require('../config/log')('gateway_proxy');
 
 /**
  * 动态获取代理目标地址
@@ -62,7 +64,36 @@ const proxyRuleCheck = () => {
   };
 };
 
+/**
+ * 代理转发
+ * @returns
+ */
+const proxyForward = () => {
+  return createProxyMiddleware({
+    changeOrigin: true,
+    router: async function (req) {
+      const url = await proxyTarget(req);
+      return url;
+    },
+    onProxyReq: async function (proxyReq, req, res) {
+      log.debug('服务代理地址', req.proxyTargetUrl);
+      /* 如果req.proxyTargetUrl不存在或者为空字符串，表示代理服务未找到 */
+      if (!req.proxyTargetUrl || req.proxyTargetUrl === '') {
+        res.json({ error: 'NOSERVER', msg: '服务未启动或不可达!' });
+      }
+      /* 代理前赋值用户角色信息 */
+    },
+    onProxyRes: async function (proxyRes, req, res) {
+      // console.log('----返回', res);
+    },
+    onError: async function (err, req, res) {
+      log.error('服务代理异常', err);
+      res.json({ error: 'PROXY_ERROR', msg: '服务请求异常!' });
+    },
+  });
+};
+
 module.exports = {
-  proxyTarget,
   proxyRuleCheck,
+  proxyForward,
 };

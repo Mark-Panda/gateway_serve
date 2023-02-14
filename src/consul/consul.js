@@ -1,6 +1,8 @@
 const Consul = require('consul');
 const { consulServe, gatewayServe } = require('../config').Config;
 const log = require('../config/log')('gateway_consul');
+const { getIpAddress } = require('../util/index');
+
 class ConsulConfig {
   /**
    * consul初始化信息
@@ -194,11 +196,14 @@ class ConsulConfig {
   }
 }
 
+const osIp = getIpAddress();
+console.log('-----本机IP地址-----', osIp);
 const consulClient = new ConsulConfig({
   consulhost: consulServe.host,
   consulport: consulServe.port,
   servicehost: '172.26.165.67',
-  serviceport: 3100,
+  // servicehost: osIp, //本机IP
+  serviceport: 3100, // 本机服务端口
   serviceName: gatewayServe.serveName,
 });
 

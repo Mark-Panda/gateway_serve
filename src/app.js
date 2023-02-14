@@ -1,21 +1,15 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const child_process = require('child_process');
-const { createProxyMiddleware } = require('http-proxy-middleware');
 const path = require('path');
 const { gatewayServe, rootPath, staticPath } = require('./config').Config;
-const router = require('./proxy/router');
+const router = require('./routers/router');
 const serviceLocalStorage = require('./watch/local-storage.js');
-const { proxyRuleCheck, proxyTarget } = require('./proxy/proxyMiddleware');
+const { proxyRuleCheck, proxyForward } = require('./proxy/proxyMiddleware');
 const log = require('./config/log')('gateway_proxy');
 
 const app = express();
 
 // TODO: 代理graphql请求的话bodyParser中间件会影响代理转发，如果后续仍有问题需要解决
-// parse application/x-www-form-urlencoded
-// app.use(bodyParser.urlencoded({ extended: false }));
-// parse application/json
-// app.use(bodyParser.json());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,7 +17,7 @@ app.set('view engine', 'ejs');
 /**
  * 健康检查 放在每个项目的最开始，不需要走中间件
  */
-app.get('/health', bodyParser.json(), (req, res) => {
+app.get('/health', (req, res) => {
   return res.end('OK!');
 });
 
@@ -58,30 +52,7 @@ app.use('/', router);
 /**
  * 路由代理转发中间件
  */
-app.use(
-  createProxyMiddleware({
-    changeOrigin: true,
-    router: async function (req) {
-      const url = await proxyTarget(req);
-      return url;
-    },
-    onProxyReq: async function (proxyReq, req, res) {
-      log.debug('服务代理地址', req.proxyTargetUrl);
-      /* 如果req.proxyTargetUrl不存在或者为空字符串，表示代理服务未找到 */
-      if (!req.proxyTargetUrl || req.proxyTargetUrl === '') {
-        res.json({ error: 'NOSERVER', msg: '服务未启动或不可达!' });
-      }
-      /* 代理前赋值用户角色信息 */
-    },
-    onProxyRes: async function (proxyRes, req, res) {
-      // console.log('----返回', res);
-    },
-    onError: async function (err, req, res) {
-      log.error('服务代理异常', err);
-      res.json({ error: 'PROXY_ERROR', msg: '服务请求异常!' });
-    },
-  }),
-);
+app.use(proxyForward());
 
 // fork一个子进程，用于监听服务节点变化
 const workerProcess = child_process.fork(rootPath + '/src/watch/startWatch.js');

@@ -3,12 +3,14 @@ gatewayServe:
   port: 6701
   serveName: 'gateway_serve'
   # 路由白名单
-  whileList:
-    ['dev', 'health', 'gateway_serve', 'checkServiceStatus', 'playground']
+  whileList: ['dev', 'health', 'login', 'checkServiceStatus', 'playground']
+  token:
+    secret: 5B594812A0E15B63867DBD0C7C27564D
+    expires: 7
 #consul服务配置
 consulServe:
   # host: '192.168.1.102'
-  host: '172.26.166.24'
+  host: '172.26.166.41'
   port: 8500
 
 # 数据库连接配置
@@ -17,7 +19,7 @@ dbConfig:
 
 # redis配置
 cacheConfig:
-  host: 'localhost'
+  host: '172.26.15.40' #  172.26.165.67   172.26.15.40
   port: 6379
 
 # 微服务路由标识

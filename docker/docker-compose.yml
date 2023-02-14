@@ -42,5 +42,29 @@ services:
     command: -server -data-dir /tmp/consul -join consulserver
     networks:
       - app
+
+  mysql:
+    image: mariadb:latest
+    restart: always
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: prisma
+    volumes:
+      - ../volumes/database_mysql-data:/var/lib/mysql
+    command: ['mysqld', '--event-scheduler=ON']
+    networks:
+      - app
+  redis:
+    image: redis:latest
+    restart: always
+    command: ['redis-server', '--appendonly', 'yes']
+    hostname: redis
+    volumes:
+      - ../volumes/database_redis-data:/data
+    ports:
+      - '6379:6379'
+    networks:
+      - app
 networks:
   app:
